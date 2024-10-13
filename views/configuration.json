@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/v2/tools/schema/views.json",
+  "version": "v1",
+  "definitions": [
+    {
+      "name": "configuration",
+      "priority": 400,
+      "fragments": ["externalExtensionEnabled"],
+      "columns": [
+        "externalExtensionEnabled",
+        "inboundExternalIdCacheRetention",
+        "inboundExternalIdCacheSize",
+        "logConnectorErrorInBackend",
+        "logPayload",
+        "logSubstitution",
+        "outboundMappingEnabled",
+        "sendConnectorLifecycle",
+        "sendMappingStatus",
+        "sendNotificationLifecycle",
+        "sendSubscriptionEvents"
+      ]
+    }
+  ]
+}

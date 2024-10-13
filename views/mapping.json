@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/v2/tools/schema/views.json",
+  "version": "v1",
+  "definitions": [
+    {
+      "name": "mapping",
+      "priority": 400,
+      "fragments": ["d11r_mapping"],
+      "type": "d11r_mapping",
+      "columns": [
+        "id",
+        "name",
+        "d11r_mapping.active",
+        "d11r_mapping.direction",
+        "d11r_mapping.mappingTopic",
+        "d11r_mapping.subscriptionTopic",
+        "d11r_mapping.targetAPI"
+      ]
+    }
+  ]
+}

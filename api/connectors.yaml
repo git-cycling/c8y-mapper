@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/v2/tools/schema/extensionCommands.json
+---
+group:
+  name: connectors
+  description: Manage connectors
+
+commands:
+  - name: list
+    description: Simple list command
+    descriptionLong: |
+      Some more detailed instructions on how to use the command
+    exampleList:
+      - command: c8y %[1]s connectors list
+        description: List connectors
+    path: service/dynamic-mapping-service/configuration/connector/instances
+
+  - name: get
+    description: Get connector
+    descriptionLong: Get a connector using a simple GET request
+    method: GET
+    path: inventory/managedObjects/{id}
+    exampleList:
+      - command: c8y %[1]s connectors get --id 1234
+        description: Get a connector by id

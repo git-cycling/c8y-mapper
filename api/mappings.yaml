@@ -1,0 +1,169 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/v2/tools/schema/extensionCommands.json
+---
+group:
+  name: mappings
+  description: Manage mappings
+
+# Use can use yaml anchors to reduce the amount of boilerplate
+x-types-direction: &type-direction
+  type: string
+  description: Mappings direction. It support a custom INBOUND & OUTBOUND
+  pipeline: true
+  completion:
+    type: external
+    command:
+      - echo
+      - INBOUND \n OUTBOUND
+
+x-types-mapping: &type-mapping
+  type: string
+  description: Mappings. It support a custom completion/lookup using other c8y commands
+  pipeline: true
+  completion:
+    type: external
+    command:
+      - c8y
+      - inventory
+      - find
+      - --type
+      - "d11r_mapping"
+      - --query
+      - "name eq '%s*'"
+      - --select=name
+  lookup:
+    type: external
+    command:
+      - c8y
+        - inventory
+        - find
+        - --type
+        - "d11r_mapping"
+        - --query
+        - "name eq '%s*'"
+        - --select=id
+
+commands:
+  - name: list
+    description: List mappings
+    descriptionLong: |
+      List all mappings
+    exampleList:
+      - command: c8y %[1]s mappings list
+        description: List mappings
+    preset:
+      type: query-inventory
+      options:
+        param: query
+        value: (type eq 'd11r_mapping')
+      extensions:
+        - name: direction
+          property: query
+          format: d11r_mapping.direction eq '%s'
+          type: string
+          validationSet:
+            - INBOUND
+            - OUTBOUND
+          description: Mapping direction, i.e. INBOUND or OUTBOUND
+
+  - name: get
+    description: Get mapping
+    descriptionLong: Get a mapping using a simple GET request
+    method: GET
+    path: inventory/managedObjects/{id}
+    exampleList:
+      - command: c8y %[1]s mappings get --id 1234
+        description: Get a mapping by id
+      - command: c8y %[1]s mappings get --id linux
+        description: Get a mapping by name
+    pathParameters:
+      - name: id
+        # <<: *type-mapping
+        description: Id of the mapping
+        type: id[]
+        completion:
+          type: external
+          command:
+            - c8y
+            - inventory
+            - find
+            - --type
+            - "d11r_mapping"
+            - --query
+            - "name eq '%s*'"
+            - --select=id, name
+
+  # - name: activate
+  #   description: Activate/ deactivate mapping
+  #   descriptionLong: Should update d11r_mapping.active = true/false, how do I
+  #   method: PUT
+  #   path: inventory/managedObjects/{id}
+  #   pathParameters:
+  #     - name: id
+  #       <<: *type-mapping
+  #   body:
+  #     - name: name
+  #       type: string
+  #       description: Profile name
+  #       required: true
+
+  - name: activate
+    description: Update object
+    descriptionLong: Update
+    method: PUT
+    path: inventory/managedObjects/{id}
+    pathParameters:
+      - name: id
+        # <<: *type-mapping
+        description: Id of the mapping
+        type: id[]
+        completion:
+          type: external
+          command:
+            - c8y
+            - inventory
+            - find
+            - --type
+            - "d11r_mapping"
+            - --query
+            - "name eq '%s*'"
+            - --select=id, name
+    body:
+      - name: id
+        type: string
+        description: Id
+        pipeline: true
+
+    bodyTemplates:
+      # Apply a static template to enforce specific fragments
+      - type: jsonnet
+        template: "{id: var('id', 'any_id'),com_cumulocity_model_Agent:{}, c8y_IsDevice:{}, c8y_IsLinux:{}}"
+        applyLast: true
+
+  - name: delete
+    description: Delete mapping
+    method: DELETE
+    path: inventory/managedObjects/{id}
+    pathParameters:
+      - name: id
+        <<: *type-mapping
+
+  - name: listOverAPI
+    description: Simple list command
+    descriptionLong: |
+      Some more detailed instructions on how to use the command
+
+      It can also use come additional context. This command uses a the 'query-inventory' preset
+      so that you don't have to define all of the other flags yourself.
+    exampleList:
+      - command: c8y %[1]s mappings list
+        description: List mappings
+    path: inventory/managedObjects?type=d11r_mapping
+    queryParameters:
+      - name: direction
+        property: query
+        format: d11r_mapping.direction eq '%s'
+        type: string
+        validationSet:
+          - INBOUND
+          - OUTBOUND
+        description: Mapping direction

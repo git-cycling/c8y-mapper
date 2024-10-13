@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/v2/tools/schema/extensionCommands.json
+---
+group:
+  name: configurations
+  description: Manage configurations
+
+commands:
+  - name: list
+    description: Simple list command
+    descriptionLong: |
+      Some more detailed instructions on how to use the command
+    exampleList:
+      - command: c8y %[1]s configurations list
+        description: List configurations
+    path: service/dynamic-mapping-service/configuration/service
+
+  - name: get
+    description: Get configuration
+    descriptionLong: Get a configuration using a simple GET request
+    method: GET
+    path: inventory/managedObjects/{id}
+    exampleList:
+      - command: c8y %[1]s configurations get --id 1234
+        description: Get a configuration by id
