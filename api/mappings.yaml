@@ -81,41 +81,25 @@ commands:
         description: Id of the mapping
         type: id[]
 
-  # - name: activate
-  #   description: Activate/ deactivate mapping
-  #   descriptionLong: Should update d11r_mapping.active = true/false, how do I
-  #   method: PUT
-  #   path: inventory/managedObjects/{id}
-  #   pathParameters:
-  #     - name: id
-  #       <<: *type-mapping
-  #   body:
-  #     - name: name
-  #       type: string
-  #       description: Profile name
-  #       required: true
-
-  - name: activate
-    description: Update object
-    descriptionLong: Update
-    method: PUT
-    path: inventory/managedObjects/{id}
-    pathParameters:
-      - name: id
-        <<: *type-mapping
-        description: Id of the mapping
-        type: id[]
+  - name: update
+    description: Activate/deactivate mapping
+    descriptionLong: Deactivate mapping
+    method: POST
+    path: service/dynamic-mapping-service/operation
     body:
       - name: id
-        type: string
-        description: Id
-        pipeline: true
+        <<: *type-mapping
+        property: parameter.id
+        description: Id of the mapping
+
+      - name: active
+        property: parameter.active
+        type: booleanValue
+        description: Active
 
     bodyTemplates:
-      # Apply a static template to enforce specific fragments
       - type: jsonnet
-        template: "{id: var('id', 'any_id'),com_cumulocity_model_Agent:{}, c8y_IsDevice:{}, c8y_IsLinux:{}}"
-        applyLast: true
+        template: "{operation: 'ACTIVATE_MAPPING'}"
 
   - name: delete
     description: Delete mapping
