@@ -34,13 +34,13 @@ x-types-mapping: &type-mapping
     type: external
     command:
       - c8y
-        - inventory
-        - find
-        - --type
-        - "d11r_mapping"
-        - --query
-        - "name eq '%s*'"
-        - --select=id
+      - inventory
+      - find
+      - --type
+      - "d11r_mapping"
+      - --query
+      - "name eq '%s*'"
+      - --select=id
 
 commands:
   - name: list
@@ -77,20 +77,9 @@ commands:
         description: Get a mapping by name
     pathParameters:
       - name: id
-        # <<: *type-mapping
+        <<: *type-mapping
         description: Id of the mapping
         type: id[]
-        completion:
-          type: external
-          command:
-            - c8y
-            - inventory
-            - find
-            - --type
-            - "d11r_mapping"
-            - --query
-            - "name eq '%s*'"
-            - --select=id, name
 
   # - name: activate
   #   description: Activate/ deactivate mapping
@@ -113,20 +102,9 @@ commands:
     path: inventory/managedObjects/{id}
     pathParameters:
       - name: id
-        # <<: *type-mapping
+        <<: *type-mapping
         description: Id of the mapping
         type: id[]
-        completion:
-          type: external
-          command:
-            - c8y
-            - inventory
-            - find
-            - --type
-            - "d11r_mapping"
-            - --query
-            - "name eq '%s*'"
-            - --select=id, name
     body:
       - name: id
         type: string
