@@ -9,12 +9,15 @@ USAGE
     c8y mapper mappings activation [flags]
 
 FLAGS
-    --id <string>       Id of the mapping name
+    --id <string>       Id of the mapping name. Accepts pipeline
     --state <boolean>   true or false
 
 EXAMPLES
     c8y mapper mappings activation --id 1101010 --status false
     # Deactivate mapping with id 1101010
+
+    c8y mapper mappings list | c8y mapper mappings activation --status false
+    # Deactivate a list of mappings
 EOT
 }
 
@@ -24,9 +27,11 @@ while [ $# -gt 0 ]; do
     case "$1" in
         --status)
             STATUS="$2"
+            shift
             ;;
 		--id)
             ID="$2"
+            shift
             ;;
         -h|--help)
             help
@@ -42,14 +47,22 @@ done
 
 # Validate STATUS
 if [ -n "$STATUS" ]; then
-    if [ "$STATUS" != "true" ] && [ "$STATUS" != "false" ]; then
-        echo "Error: --status must be either 'true' or 'false'"
-        exit 1
-    fi
+    case "$STATUS" in
+        true|false)
+            ;;
+        *)
+            echo "Error: --status must be either 'true' or 'false'"
+            exit 1
+            ;;
+
+    esac
 fi
 
 set -- "${ARGS[@]}"
 
-# echo "Set ${STATUS} on mapping ${FLAGS[@]} ${FLAGS}"
-
-c8y inventory get --id "${ID}" | c8y inventory update --dry --template "_.SelectMerge(input.value, {'d11r_mapping':{'active': ${STATUS}}})"
+if [ -t 0 ]; then
+    c8y inventory get -n --id "${ID}" | c8y inventory update --template "_.SelectMerge(input.value, {'d11r_mapping':{'active': ${STATUS}}})" "${FLAGS[@]}"
+else
+    # Read input from pipeline (let go-c8y-cli do the heavy lifting)
+    c8y inventory get | c8y inventory update --template "_.SelectMerge(input.value, {'d11r_mapping':{'active': ${STATUS}}})" "${FLAGS[@]}"
+fi
