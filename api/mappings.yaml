@@ -32,6 +32,10 @@ x-types-mapping: &type-mapping
       - --select=name
   lookup:
     type: external
+    options:
+      # Don't lookup if the following regex matches the input value
+      # In other words, if you already have the id then you don't need the lookup
+      idPattern: ^[0-9]+$
     command:
       - c8y
       - inventory
