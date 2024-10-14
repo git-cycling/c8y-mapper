@@ -19,6 +19,8 @@ x-types-mapping: &type-mapping
   type: string
   description: Mappings. It support a custom completion/lookup using other c8y commands
   pipeline: true
+  pipelineAliases:
+    - id
   completion:
     type: external
     command:
