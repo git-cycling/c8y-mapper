@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/v2/tools/schema/extensionCommands.json
+---
+group:
+  name: operations
+  description: Initate operations on the backend mapper microservice
+
+# Use can use yaml anchors to reduce the amount of boilerplate
+x-types-direction: &type-direction
+  type: string
+  description: Mappings direction. It support a custom INBOUND & OUTBOUND
+  pipeline: true
+  completion:
+    type: external
+    command:
+      - echo
+      - INBOUND \n OUTBOUND
+
+x-types-mapping: &type-mapping
+  type: string
+  description: Mappings. It support a custom completion/lookup using other c8y commands
+  pipeline: true
+  pipelineAliases:
+    - id
+  completion:
+    type: external
+    command:
+      - c8y
+      - inventory
+      - find
+      - --type
+      - "d11r_mapping"
+      - --query
+      - "name eq '%s*'"
+      - --select=name
+  lookup:
+    type: external
+    options:
+      # Don't lookup if the following regex matches the input value
+      # In other words, if you already have the id then you don't need the lookup
+      idPattern: ^[0-9]+$
+    command:
+      - c8y
+      - inventory
+      - find
+      - --type
+      - "d11r_mapping"
+      - --query
+      - "name eq '%s*'"
+      - --select=id
+
+commands:
+  - name: activation
+    description: Activate/deactivate mapping
+    descriptionLong: Deactivate mapping
+    method: POST
+    path: service/dynamic-mapping-service/operation
+    body:
+      - name: id
+        <<: *type-mapping
+        property: parameter.id
+        description: Id of the mapping
+
+      - name: active
+        property: parameter.active
+        type: booleanValue
+        description: Active
+
+    bodyTemplates:
+      - type: jsonnet
+        template: "{operation: 'ACTIVATE_MAPPING'}"

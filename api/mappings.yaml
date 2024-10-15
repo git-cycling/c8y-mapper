@@ -87,26 +87,6 @@ commands:
         description: Id of the mapping
         type: id[]
 
-  - name: update
-    description: Activate/deactivate mapping
-    descriptionLong: Deactivate mapping
-    method: POST
-    path: service/dynamic-mapping-service/operation
-    body:
-      - name: id
-        <<: *type-mapping
-        property: parameter.id
-        description: Id of the mapping
-
-      - name: active
-        property: parameter.active
-        type: booleanValue
-        description: Active
-
-    bodyTemplates:
-      - type: jsonnet
-        template: "{operation: 'ACTIVATE_MAPPING'}"
-
   - name: delete
     description: Delete mapping
     method: DELETE
