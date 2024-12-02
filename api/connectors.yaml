@@ -4,21 +4,46 @@ group:
   name: connectors
   description: Manage connectors
 
+x-types-connector: &type-connector
+  type: string
+  description: Connectors. It support a custom completion/lookup using other c8y commands
+  pipeline: true
+  pipelineAliases:
+    - id
+  completion:
+    type: external
+    command:
+      - c8y
+      - mapper
+      - connectors
+      - list
+      - --name='%s.*'
+      - --select=name
+    lookup:
+      - c8y
+      - mapper
+      - connectors
+      - list
+      - --name='%s.*'
+      - --select=ident
+
 commands:
   - name: list
-    description: Simple list command
+    description: List connectors
     descriptionLong: |
-      Some more detailed instructions on how to use the command
-    exampleList:
-      - command: c8y %[1]s connectors list
-        description: List connectors
+      List connectors with all details, except the password.
     path: service/dynamic-mapping-service/configuration/connector/instances
+    queryParameters:
+      - name: name
+        type: string
+        description: Filter on name
 
   - name: get
     description: Get connector
-    descriptionLong: Get a connector using a simple GET request
+    descriptionLong: Get a specific connector
     method: GET
-    path: inventory/managedObjects/{id}
-    exampleList:
-      - command: c8y %[1]s connectors get --id 1234
-        description: Get a connector by id
+    path: service/dynamic-mapping-service/configuration/connector/instance/{id}
+    pathParameters:
+      - name: id
+        <<: *type-connector
+        type: string
