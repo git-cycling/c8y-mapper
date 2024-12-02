@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/v2/tools/schema/extensionCommands.json
+---
+group:
+  name: settings
+  description: 'Manage settings for the backend service: logging, caching, ...'
+
+commands:
+  - name: list
+    description: List settings of backend service 
+    descriptionLong: |
+      'List settings for the backend service: logging, caching, ...'
+    method: GET
+    exampleList:
+      - command: c8y %[1]s settings list
+        description: List settings
+    path: service/dynamic-mapping-service/configuration/service
