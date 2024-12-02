@@ -17,26 +17,36 @@ x-types-connector: &type-connector
       - mapper
       - connectors
       - list
-      - --name='%s.*'
-      - --select=name
-    lookup:
+      - --name
+      - "%s.*"
+      - --select=name,ident,connectorType,enabled
+  lookup:
+    type: external
+    options:
+      idPattern: ^[0-9]+$
+    command:
       - c8y
       - mapper
       - connectors
       - list
-      - --name='%s.*'
+      - --name
+      - "%s"
       - --select=ident
+      - -o=csv
+      - -v
+      - -p=1
 
 commands:
   - name: list
+    method: GET
     description: List connectors
     descriptionLong: |
       List connectors with all details, except the password.
     path: service/dynamic-mapping-service/configuration/connector/instances
     queryParameters:
       - name: name
+        description: Filter on name (accepts regex)
         type: string
-        description: Filter on name
 
   - name: get
     description: Get connector
@@ -46,4 +56,3 @@ commands:
     pathParameters:
       - name: id
         <<: *type-connector
-        type: string
